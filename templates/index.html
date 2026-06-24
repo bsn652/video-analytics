@@ -3,156 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频网站数据分析系统</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>墨韵 · 视频数据分析</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">
-            <i class="fas fa-video"></i>
-            <span>VideoAnalytics</span>
-        </div>
-        <nav>
-            <a href="#" class="active"><i class="fas fa-chart-line"></i> 数据概览</a>
-            <a href="#"><i class="fas fa-video"></i> 视频列表</a>
-            <a href="#"><i class="fas fa-chart-pie"></i> 分类分析</a>
-            <a href="#"><i class="fas fa-calendar"></i> 趋势报告</a>
-            <a href="#"><i class="fas fa-cog"></i> 系统设置</a>
-        </nav>
-        <div class="sidebar-footer">
-            <a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a>
-        </div>
+    <!-- 水墨背景 -->
+    <div class="ink-bg">
+        <div class="ink-mist-1"></div>
+        <div class="ink-mist-2"></div>
+        <div class="ink-mountain"></div>
     </div>
 
-    <div class="main-content">
-        <header>
+    <!-- 侧边导航 -->
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-seal">🎬</div>
+            <div class="brand-text">
+                <span class="brand-cn">墨韵数据</span>
+                <span class="brand-en">INK · ANALYTICS</span>
+            </div>
+        </div>
+        <div class="nav-items">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">数据总览</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🎬</span>
+                <span class="nav-label">视频列表</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏷️</span>
+                <span class="nav-label">分类分析</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span class="nav-label">趋势报告</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">系统设置</span>
+            </a>
+        </div>
+        <div class="nav-footer">
+            <div class="user-profile">
+                <div class="avatar">管</div>
+                <div class="user-info">
+                    <span class="user-name">管理员</span>
+                    <span class="user-role">超级管理员</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 顶部 -->
+        <header class="top-bar">
             <div class="header-left">
-                <h1>数据概览</h1>
-                <p>视频平台运营数据分析仪表板</p>
+                <h1 class="page-title">数据总览</h1>
+                <p class="page-subtitle">视频平台运营数据分析仪表板</p>
             </div>
             <div class="header-right">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="搜索视频...">
+                <div class="search-wrap">
+                    <input type="text" placeholder="搜索视频..." class="search-input">
+                    <span class="search-icon">🔍</span>
                 </div>
-                <div class="notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge">3</span>
-                </div>
-                <div class="user-avatar">
-                    <span>管理员</span>
-                    <i class="fas fa-user-circle"></i>
-                </div>
+                <div class="header-time" id="headerTime"></div>
             </div>
         </header>
 
-        <!-- 概览卡片 -->
-        <div class="stats-cards">
-            <div class="card" id="totalViewsCard">
-                <div class="card-icon views">
-                    <i class="fas fa-eye"></i>
-                </div>
-                <div class="card-info">
-                    <span class="card-label">总播放量</span>
-                    <span class="card-value" id="totalViews">加载中...</span>
-                    <span class="card-change up"><i class="fas fa-arrow-up"></i> +12.5%</span>
+        <!-- 统计卡片 -->
+        <section class="stats-grid">
+            <div class="stat-card" data-delay="0">
+                <div class="stat-icon stat-views">👁️</div>
+                <div class="stat-body">
+                    <span class="stat-label">总播放量</span>
+                    <span class="stat-value" id="totalViews">—</span>
+                    <span class="stat-trend up">↑ 较上周 +12.5%</span>
                 </div>
             </div>
-            <div class="card" id="totalVideosCard">
-                <div class="card-icon videos">
-                    <i class="fas fa-video"></i>
-                </div>
-                <div class="card-info">
-                    <span class="card-label">视频总数</span>
-                    <span class="card-value" id="totalVideos">加载中...</span>
-                    <span class="card-change up"><i class="fas fa-arrow-up"></i> +8</span>
+            <div class="stat-card" data-delay="100">
+                <div class="stat-icon stat-videos">🎬</div>
+                <div class="stat-body">
+                    <span class="stat-label">视频总数</span>
+                    <span class="stat-value" id="totalVideos">—</span>
+                    <span class="stat-trend up">↑ 较上周 +8</span>
                 </div>
             </div>
-            <div class="card" id="totalLikesCard">
-                <div class="card-icon likes">
-                    <i class="fas fa-thumbs-up"></i>
-                </div>
-                <div class="card-info">
-                    <span class="card-label">总点赞数</span>
-                    <span class="card-value" id="totalLikes">加载中...</span>
-                    <span class="card-change up"><i class="fas fa-arrow-up"></i> +5.3%</span>
+            <div class="stat-card" data-delay="200">
+                <div class="stat-icon stat-likes">❤️</div>
+                <div class="stat-body">
+                    <span class="stat-label">总点赞数</span>
+                    <span class="stat-value" id="totalLikes">—</span>
+                    <span class="stat-trend up">↑ 较上周 +5.3%</span>
                 </div>
             </div>
-            <div class="card" id="avgWatchCard">
-                <div class="card-icon time">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="card-info">
-                    <span class="card-label">平均观看时长</span>
-                    <span class="card-value" id="avgWatchTime">加载中...</span>
-                    <span class="card-change down"><i class="fas fa-arrow-down"></i> -0.8%</span>
+            <div class="stat-card" data-delay="300">
+                <div class="stat-icon stat-time">⏱️</div>
+                <div class="stat-body">
+                    <span class="stat-label">平均观看时长</span>
+                    <span class="stat-value" id="avgWatchTime">—</span>
+                    <span class="stat-trend down">↓ 较上周 -0.8%</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- 图表区域 -->
-        <div class="charts-row">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3><i class="fas fa-chart-area"></i> 近7日播放趋势</h3>
-                    <div class="chart-actions">
-                        <button class="active">7天</button>
-                        <button>30天</button>
-                        <button>90天</button>
+        <!-- 图表区 -->
+        <section class="charts-section">
+            <div class="chart-card chart-trend" data-delay="100">
+                <div class="chart-head">
+                    <h3><span class="ink-dot"></span> 播放趋势</h3>
+                    <div class="chart-period">
+                        <button class="period-btn active">近7日</button>
+                        <button class="period-btn">近30日</button>
+                        <button class="period-btn">近90日</button>
                     </div>
                 </div>
                 <div class="chart-body">
                     <canvas id="trendChart"></canvas>
                 </div>
             </div>
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3><i class="fas fa-chart-pie"></i> 分类播放占比</h3>
-                    <div class="chart-actions">
-                        <span class="legend-item" id="legendContainer"></span>
-                    </div>
+            <div class="chart-card chart-category" data-delay="200">
+                <div class="chart-head">
+                    <h3><span class="ink-dot"></span> 分类占比</h3>
                 </div>
                 <div class="chart-body">
                     <canvas id="categoryChart"></canvas>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- 排行榜和详情 -->
-        <div class="charts-row">
-            <div class="chart-card wide">
-                <div class="chart-header">
-                    <h3><i class="fas fa-trophy"></i> 热门视频排行榜</h3>
-                    <span class="view-all">查看全部 <i class="fas fa-chevron-right"></i></span>
-                </div>
-                <div class="chart-body">
-                    <table class="rank-table">
-                        <thead>
-                            <tr>
-                                <th>排名</th>
-                                <th>视频名称</th>
-                                <th>分类</th>
-                                <th>播放量</th>
-                                <th>点赞数</th>
-                                <th>点赞率</th>
-                                <th>平均观看(分)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rankBody">
-                            <tr><td colspan="7" style="text-align:center;">加载中...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        <!-- 排行榜 -->
+        <section class="rank-section" data-delay="200">
+            <div class="rank-head">
+                <h3><span class="ink-dot"></span> 热门视频排行榜</h3>
+                <span class="rank-more">查看全部 →</span>
             </div>
-        </div>
+            <div class="rank-body">
+                <table class="rank-table">
+                    <thead>
+                        <tr>
+                            <th class="col-rank">排名</th>
+                            <th class="col-title">视频名称</th>
+                            <th class="col-cat">分类</th>
+                            <th class="col-num">播放量</th>
+                            <th class="col-num">点赞数</th>
+                            <th class="col-num">点赞率</th>
+                            <th class="col-num">均播(分)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankBody">
+                        <tr class="loading-row"><td colspan="7">加载中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- 底部 -->
-        <footer>
-            <p>© 2026 VideoAnalytics - 视频网站数据分析系统</p>
-            <p>数据每5分钟自动刷新</p>
+        <footer class="site-footer">
+            <p>© 2026 墨韵数据 · 视频分析平台</p>
+            <p>数据每 5 分钟自动刷新</p>
         </footer>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="/static/script.js"></script>

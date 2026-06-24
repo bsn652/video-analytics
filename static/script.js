@@ -5,15 +5,17 @@ function formatNumber(num) {
     return num.toLocaleString();
 }
 
-// 格式化大数字为完整显示
 function formatFullNumber(num) {
     return num.toLocaleString();
 }
 
-// 颜色方案
-const colors = ['#3182ce', '#38a169', '#e53e3e', '#d69e2e', '#805ad5', '#ed8936', '#319795', '#d53f8c'];
-const colorAlpha = ['rgba(49,130,206,0.3)', 'rgba(56,161,105,0.3)', 'rgba(229,62,62,0.3)', 'rgba(214,158,46,0.3)',
-    'rgba(128,90,213,0.3)', 'rgba(237,137,54,0.3)', 'rgba(49,151,149,0.3)', 'rgba(213,63,140,0.3)'];
+// 水墨配色
+const inkColors = ['#6B8E73', '#A67C52', '#8B6B6B', '#6B8B9E', '#9E8B6B', '#7B8B6B', '#8B6B8E', '#6B9E8B'];
+const inkAlpha = [
+    'rgba(107,142,115,0.2)', 'rgba(166,124,82,0.2)', 'rgba(139,107,107,0.2)',
+    'rgba(107,139,158,0.2)', 'rgba(158,139,107,0.2)', 'rgba(123,139,107,0.2)',
+    'rgba(139,107,142,0.2)', 'rgba(107,158,139,0.2)'
+];
 
 let trendChart = null;
 let categoryChart = null;
@@ -21,63 +23,61 @@ let categoryChart = null;
 // 加载数据
 async function loadData() {
     try {
-        const response = await fetch('/api/dashboard');
-        const data = await response.json();
+        const res = await fetch('/api/dashboard');
+        const data = await res.json();
         updateCards(data);
         updateTrendChart(data.daily_views);
         updateCategoryChart(data.category_stats);
         updateRankTable(data.video_stats);
-    } catch (error) {
-        console.error('加载数据出错:', error);
+    } catch (e) {
+        console.error('加载失败:', e);
     }
 }
 
-// 更新概览卡片
-function updateCards(data) {
-    document.getElementById('totalViews').textContent = formatNumber(data.total_views);
-    document.getElementById('totalVideos').textContent = data.total_videos;
-    document.getElementById('totalLikes').textContent = formatNumber(data.total_likes);
-    document.getElementById('avgWatchTime').textContent = data.avg_watch_time + '分';
+// 更新卡片
+function updateCards(d) {
+    const el = id => document.getElementById(id);
+    el('totalViews').textContent = formatNumber(d.total_views);
+    el('totalVideos').textContent = d.total_videos;
+    el('totalLikes').textContent = formatNumber(d.total_likes);
+    el('avgWatchTime').textContent = d.avg_watch_time + '分';
 }
 
-// 更新趋势图
-function updateTrendChart(dailyViews) {
+// 趋势图
+function updateTrendChart(daily) {
     const ctx = document.getElementById('trendChart').getContext('2d');
-
     if (trendChart) trendChart.destroy();
-
-    const dates = dailyViews.map(d => d.date);
-    const views = dailyViews.map(d => d.views);
-    const uniqueViewers = dailyViews.map(d => d.unique_viewers);
 
     trendChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: dates,
+            labels: daily.map(d => d.date),
             datasets: [
                 {
                     label: '播放量',
-                    data: views,
-                    borderColor: '#3182ce',
-                    backgroundColor: 'rgba(49,130,206,0.1)',
+                    data: daily.map(d => d.views),
+                    borderColor: '#6B8E73',
+                    backgroundColor: 'rgba(107,142,115,0.08)',
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#3182ce',
-                    pointBorderColor: '#fff',
+                    pointBackgroundColor: '#6B8E73',
+                    pointBorderColor: '#F8F6F2',
                     pointBorderWidth: 2,
                     pointRadius: 4,
+                    pointHoverRadius: 6,
                 },
                 {
                     label: '独立访客',
-                    data: uniqueViewers,
-                    borderColor: '#38a169',
-                    backgroundColor: 'rgba(56,161,105,0.1)',
+                    data: daily.map(d => d.unique_viewers),
+                    borderColor: '#A67C52',
+                    backgroundColor: 'rgba(166,124,82,0.08)',
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#38a169',
-                    pointBorderColor: '#fff',
+                    pointBackgroundColor: '#A67C52',
+                    pointBorderColor: '#F8F6F2',
                     pointBorderWidth: 2,
                     pointRadius: 4,
+                    pointHoverRadius: 6,
                 }
             ]
         },
@@ -86,109 +86,93 @@ function updateTrendChart(dailyViews) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: true,
                     position: 'top',
                     labels: {
                         usePointStyle: true,
-                        padding: 15,
-                        font: { size: 12 }
+                        padding: 16,
+                        font: { family: 'Inter', size: 12 },
+                        color: '#4A4A4A'
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    titleFont: { size: 13 },
-                    bodyFont: { size: 12 },
-                    padding: 10,
+                    backgroundColor: 'rgba(26,26,26,0.9)',
+                    titleFont: { family: 'Noto Serif SC', size: 13 },
+                    bodyFont: { family: 'Inter', size: 12 },
+                    padding: 12,
+                    cornerRadius: 8,
                     callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': ' + formatFullNumber(context.parsed.y);
-                        }
+                        label: ctx => ctx.dataset.label + ': ' + formatFullNumber(ctx.parsed.y)
                     }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0,0,0,0.05)'
-                    },
+                    grid: { color: 'rgba(107,142,115,0.06)' },
                     ticks: {
-                        callback: function(value) {
-                            return formatNumber(value);
-                        },
-                        font: { size: 11 }
+                        callback: v => formatNumber(v),
+                        font: { family: 'Inter', size: 11 },
+                        color: '#8B8B8B'
                     }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { size: 11 } }
+                    ticks: { font: { family: 'Inter', size: 11 }, color: '#8B8B8B' }
                 }
             },
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            }
+            interaction: { intersect: false, mode: 'index' }
         }
     });
 }
 
-// 更新分类饼图
-function updateCategoryChart(categoryStats) {
+// 分类饼图
+function updateCategoryChart(cats) {
     const ctx = document.getElementById('categoryChart').getContext('2d');
-
     if (categoryChart) categoryChart.destroy();
 
-    const categories = Object.keys(categoryStats);
-    const values = categories.map(cat => categoryStats[cat].views);
-    const total = values.reduce((a, b) => a + b, 0);
-
-    // 更新图例
-    const legendContainer = document.getElementById('legendContainer');
-    legendContainer.innerHTML = '';
+    const labels = Object.keys(cats);
+    const values = labels.map(k => cats[k].views);
 
     categoryChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: categories,
+            labels,
             datasets: [{
                 data: values,
-                backgroundColor: colors.slice(0, categories.length),
-                borderColor: '#ffffff',
+                backgroundColor: inkColors.slice(0, labels.length),
+                borderColor: '#F8F6F2',
                 borderWidth: 2,
-                hoverOffset: 8
+                hoverOffset: 10
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '60%',
+            cutout: '62%',
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
                         padding: 12,
                         usePointStyle: true,
-                        font: { size: 11 },
-                        generateLabels: function(chart) {
-                            const data = chart.data;
-                            return data.labels.map((label, i) => ({
-                                text: label + ' (' + formatNumber(data.datasets[0].data[i]) + ')',
-                                fillStyle: data.datasets[0].backgroundColor[i],
-                                hidden: false,
-                                index: i,
-                                pointStyle: 'circle'
-                            }));
-                        }
+                        font: { family: 'Inter', size: 11 },
+                        color: '#4A4A4A',
+                        generateLabels: chart => chart.data.labels.map((l, i) => ({
+                            text: l + ' (' + formatNumber(chart.data.datasets[0].data[i]) + ')',
+                            fillStyle: chart.data.datasets[0].backgroundColor[i],
+                            pointStyle: 'circle',
+                            index: i
+                        }))
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    padding: 10,
+                    backgroundColor: 'rgba(26,26,26,0.9)',
+                    padding: 12,
+                    cornerRadius: 8,
                     callbacks: {
-                        label: function(context) {
-                            const value = context.parsed;
-                            const pct = ((value / total) * 100).toFixed(1);
-                            return context.label + ': ' + formatFullNumber(value) + ' (' + pct + '%)';
+                        label: ctx => {
+                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            return ctx.label + ': ' + formatFullNumber(ctx.parsed) + ' (' + ((ctx.parsed / total) * 100).toFixed(1) + '%)';
                         }
                     }
                 }
@@ -197,40 +181,46 @@ function updateCategoryChart(categoryStats) {
     });
 }
 
-// 更新排行榜
-function updateRankTable(videoStats) {
+// 排行榜
+function updateRankTable(stats) {
     const tbody = document.getElementById('rankBody');
     tbody.innerHTML = '';
-
-    videoStats.forEach((video, index) => {
-        const rank = index + 1;
-        let rankClass = '';
-        if (rank === 1) rankClass = 'rank-1';
-        else if (rank === 2) rankClass = 'rank-2';
-        else if (rank === 3) rankClass = 'rank-3';
-
+    stats.forEach((v, i) => {
+        const r = i + 1;
+        let rc = '';
+        if (r === 1) rc = 'rank-1';
+        else if (r === 2) rc = 'rank-2';
+        else if (r === 3) rc = 'rank-3';
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><span class="rank-num ${rankClass}">${rank}</span></td>
-            <td><strong>${video.title}</strong></td>
-            <td><span class="category-tag">${video.category}</span></td>
-            <td>${formatFullNumber(video.views)}</td>
-            <td>${formatFullNumber(video.likes)}</td>
-            <td>${video.like_rate}%</td>
-            <td>${video.avg_watch_time}分钟</td>
+            <td><span class="rank-num ${rc}">${r}</span></td>
+            <td class="video-title">${v.title}</td>
+            <td><span class="category-tag">${v.category}</span></td>
+            <td style="text-align:right">${formatFullNumber(v.views)}</td>
+            <td style="text-align:right">${formatFullNumber(v.likes)}</td>
+            <td style="text-align:right">${v.like_rate}%</td>
+            <td style="text-align:right">${v.avg_watch_time}</td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// 自动刷新 - 每1分钟
-function autoRefresh() {
-    loadData();
-    setInterval(loadData, 60000);
+// 更新时间
+function updateTime() {
+    const now = new Date();
+    document.getElementById('headerTime').textContent = now.toLocaleString('zh-CN', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+    });
 }
 
-// 页面加载完成后执行
-document.addEventListener('DOMContentLoaded', function() {
+// 自动刷新
+setInterval(loadData, 60000);
+setInterval(updateTime, 1000);
+
+// 启动
+document.addEventListener('DOMContentLoaded', () => {
     loadData();
-    autoRefresh();
+    updateTime();
 });

@@ -6,9 +6,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 CORS(app)
 
-# 模拟数据生成
 def generate_mock_data():
-    # 视频列表
     videos = [
         {"id": 1, "title": "【4K】绝美自然风光纪录片", "category": "纪录片"},
         {"id": 2, "title": "Python机器学习入门到精通", "category": "教育"},
@@ -20,7 +18,6 @@ def generate_mock_data():
         {"id": 8, "title": "吉他入门教程：第一课", "category": "音乐"},
     ]
 
-    # 最近7天的观看数据
     today = datetime.now()
     daily_views = []
     for i in range(6, -1, -1):
@@ -31,7 +28,6 @@ def generate_mock_data():
             "unique_viewers": random.randint(2000, 15000)
         })
 
-    # 视频详细数据
     video_stats = []
     for v in videos:
         views = random.randint(10000, 500000)
@@ -46,7 +42,6 @@ def generate_mock_data():
             "like_rate": round(likes / views * 100, 1)
         })
 
-    # 分类统计
     category_stats = {}
     for vs in video_stats:
         cat = vs["category"]
@@ -76,5 +71,4 @@ def dashboard():
     data = generate_mock_data()
     return jsonify(data)
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+app.run(debug=True, port=5000)
